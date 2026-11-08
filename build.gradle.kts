@@ -24,4 +24,12 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation(ktorLibs.server.testHost)
+    // MySQL JDBC driver
+    implementation("com.mysql:mysql-connector-j:9.3.0")
+
+    // Database connection pooling
+    implementation("com.zaxxer:HikariCP:6.3.0")
+
+    //for .env
+    implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
 }
