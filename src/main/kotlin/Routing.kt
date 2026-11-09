@@ -69,3 +69,23 @@ private suspend fun getUsers(): List<User> =
 
         users
     }
+private suspend fun getUser(int id): List<User> =
+    withContext(Dispatchers.IO){
+        val user: User
+        DatabaseFactory.getConnection.prepareStatement(
+            "SELECT * FROM users WHERE id = ${id}"
+        )
+        statement.use { query ->
+            val result.use{
+                user.add(
+                    User(
+                        id = it.getInt("id"),
+                        name = it.getString("name"),
+                        email = it.getString("email"),
+                        phone = it.getString("phone")
+                    )
+                )
+            }
+        }
+        user
+    }
