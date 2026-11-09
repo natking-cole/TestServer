@@ -57,7 +57,7 @@ private suspend fun getUsers(): List<User> =
                         users.add(
                             User(
                                 id = it.getInt("id"),
-                                name = it.getString("username"),
+                                name = it.getString("name"),
                                 email = it.getString("email"),
                                 phone = it.getString("phone")
                             )
