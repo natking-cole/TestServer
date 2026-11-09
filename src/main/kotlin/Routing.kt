@@ -44,7 +44,7 @@ private suspend fun getUsers(): List<User> =
         DatabaseFactory.getConnection().use { connection ->
 
             val statement = connection.prepareStatement(
-                "SELECT id, username, email, phone FROM users"
+                "SELECT id, name, email, phone FROM users"
             )
 
             statement.use { query ->
