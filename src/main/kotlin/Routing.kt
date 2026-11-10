@@ -1,7 +1,9 @@
 package com.example
 
 import com.example.database.DatabaseFactory
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
+import io.ktor.server.request.receive
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.Dispatchers
@@ -16,10 +18,23 @@ fun Application.configureRouting() {
         get("/json/kotlinx-serialization") {
             call.respond(mapOf("hello" to "world"))
         }
-        get("/users"){
-            val users = getUsers()
-            call.respond(users)
+
+            get("/users"){
+                val users = getUsers()
+                call.respond(users)
+            }
+        post("/users") {
+            try{
+                val user = call.receive<User>()
+            }
+            catch(e: Exception){
+                call.respond(HttpStatusCode.BadRequest)
+            }
         }
+
+
+
+
         get("/users/{id}"){
             val user = getUser(call.parameters["id"]!!.toInt())
             if (user != null){
@@ -30,6 +45,7 @@ fun Application.configureRouting() {
             }
 
         }
+
     }
 }
 
@@ -98,3 +114,4 @@ private suspend fun getUser(id: Int): User? =
         }
         user
     }
+
