@@ -21,16 +21,14 @@ fun Application.configureRouting() {
             call.respond(users)
         }
         get("/users/{id}"){
-            val userId = call.parameters["id"]!!.toInt()
-            val user = User(
-                id = userId,
-                name = "hard",
-                phone = "421-xxx-xxxx",
-                email = "hardcoded@yahoo.com"
+            val user = getUser(call.parameters["id"]!!.toInt())
+            if (user != null){
+                call.respond(user)
+            }
+            else{
+                call.respond("User not found!")
+            }
 
-            )
-
-            call.respond(user)
         }
     }
 }
@@ -44,7 +42,7 @@ private suspend fun getUsers(): List<User> =
         DatabaseFactory.getConnection().use { connection ->
 
             val statement = connection.prepareStatement(
-                "SELECT id, name, email, phone FROM users"
+                "SELECT id, username, email, phone FROM users"
             )
 
             statement.use { query ->
@@ -57,7 +55,7 @@ private suspend fun getUsers(): List<User> =
                         users.add(
                             User(
                                 id = it.getInt("id"),
-                                name = it.getString("name"),
+                                name = it.getString("username"),
                                 email = it.getString("email"),
                                 phone = it.getString("phone")
                             )
@@ -69,22 +67,33 @@ private suspend fun getUsers(): List<User> =
 
         users
     }
-private suspend fun getUser(int id): List<User> =
-    withContext(Dispatchers.IO){
-        val user: User
-        DatabaseFactory.getConnection.prepareStatement(
-            "SELECT * FROM users WHERE id = ${id}"
-        )
-        statement.use { query ->
-            val result.use{
-                user.add(
-                    User(
-                        id = it.getInt("id"),
-                        name = it.getString("name"),
-                        email = it.getString("email"),
-                        phone = it.getString("phone")
-                    )
-                )
+
+private suspend fun getUser(id: Int): User? =
+    withContext(Dispatchers.IO) {
+
+        var user: User? = null
+
+        DatabaseFactory.getConnection().use { connection ->
+
+            val statement = connection.prepareStatement(
+                "SELECT id, username, email, phone FROM users WHERE id = $id"
+            )
+
+            statement.use { query ->
+
+                val result = query.executeQuery()
+
+                result.use {
+                    while (it.next()) {
+                        user = User(
+                            id = it.getInt("id"),
+                            name = it.getString("username"),
+                            email = it.getString("email"),
+                            phone = it.getString("phone")
+                        )
+                    }
+
+                }
             }
         }
         user
