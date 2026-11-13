@@ -58,7 +58,7 @@ private suspend fun getUsers(): List<User> =
         DatabaseFactory.getConnection().use { connection ->
 
             val statement = connection.prepareStatement(
-                "SELECT id, username, email, phone FROM users"
+                "SELECT id, name, email, phone FROM users"
             )
 
             statement.use { query ->
@@ -71,7 +71,7 @@ private suspend fun getUsers(): List<User> =
                         users.add(
                             User(
                                 id = it.getInt("id"),
-                                name = it.getString("username"),
+                                name = it.getString("name"),
                                 email = it.getString("email"),
                                 phone = it.getString("phone")
                             )
@@ -92,7 +92,7 @@ private suspend fun getUser(id: Int): User? =
         DatabaseFactory.getConnection().use { connection ->
 
             val statement = connection.prepareStatement(
-                "SELECT id, username, email, phone FROM users WHERE id = $id"
+                "SELECT id, name, email, phone FROM users WHERE id = $id"
             )
 
             statement.use { query ->
@@ -103,7 +103,7 @@ private suspend fun getUser(id: Int): User? =
                     while (it.next()) {
                         user = User(
                             id = it.getInt("id"),
-                            name = it.getString("username"),
+                            name = it.getString("name"),
                             email = it.getString("email"),
                             phone = it.getString("phone")
                         )
@@ -131,7 +131,7 @@ private suspend fun setUser(name: String, email: String, phone: String) = withCo
                 while (it.next()) {
                     val user = User(
                         id = it.getInt("id"),
-                        name = it.getString("username"),
+                        name = it.getString("name"),
                         email = it.getString("email"),
                         phone = it.getString("phone")
                     )
