@@ -26,15 +26,25 @@ fun Application.configureRouting() {
                 call.respond(users)
             }
         post("/users") {
-            try{
+            try {
                 val user = call.receive<User>()
-            }
-            catch(e: Exception){
+                // Save user to DB, etc.
+
+                // Send a valid response back to the client
+                call.respond<UserResponse>(
+                    status = HttpStatusCode.Created,
+                    message = UserResponse(
+                        id = user.id,
+                        name = user.name,
+                        email = user.email,
+                        phone = user.phone
+                    )
+                )
+            } catch (e: Exception) {
                 e.printStackTrace()
-                call.respondText(
-                    text = """{"message": "${e.message ?: "Bad Request"}"}""",
-                    contentType = ContentType.Application.Json,
-                    status = HttpStatusCode.BadRequest
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = ("Bad Request")
                 )
             }
         }
