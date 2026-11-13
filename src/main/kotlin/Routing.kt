@@ -1,6 +1,8 @@
 package com.example
 
 import com.example.database.DatabaseFactory
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.request.receive
@@ -28,7 +30,12 @@ fun Application.configureRouting() {
                 val user = call.receive<User>()
             }
             catch(e: Exception){
-                call.respond(HttpStatusCode.BadRequest)
+                e.printStackTrace()
+                call.respondText(
+                    text = """{"message": "${e.message ?: "Bad Request"}"}""",
+                    contentType = ContentType.Application.Json,
+                    status = HttpStatusCode.BadRequest
+                )
             }
         }
 
