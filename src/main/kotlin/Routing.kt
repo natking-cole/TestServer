@@ -115,3 +115,30 @@ private suspend fun getUser(id: Int): User? =
         user
     }
 
+private suspend fun setUser(name: String, email: String, phone: String) = withContext(Dispatchers.IO) {
+    DatabaseFactory.getConnection().use { connection ->
+
+        val statement = connection.prepareStatement(
+            "INSERT INTO users (name, email, phone)" +
+                    "VALUES($name, $email, $phone)"
+        )
+
+        statement.use { query ->
+
+            val result = query.executeQuery()
+
+            result.use {
+                while (it.next()) {
+                    val user = User(
+                        id = it.getInt("id"),
+                        name = it.getString("username"),
+                        email = it.getString("email"),
+                        phone = it.getString("phone")
+                    )
+                }
+
+            }
+        }
+    }
+
+}
