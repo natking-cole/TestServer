@@ -28,23 +28,28 @@ fun Application.configureRouting() {
         post("/users") {
             try {
                 val user = call.receive<User>()
-                // Save user to DB, etc.
 
-                // Send a valid response back to the client
-                call.respond<UserResponse>(
+                println("Received user: $user")
+
+                val response = UserResponse(
+                    id = user.id,
+                    name = user.name,
+                    email = user.email,
+                    phone = user.phone
+                )
+
+                call.respond(
                     status = HttpStatusCode.Created,
-                    message = UserResponse(
-                        id = user.id,
-                        name = user.name,
-                        email = user.email,
-                        phone = user.phone
-                    )
+                    message = response
                 )
             } catch (e: Exception) {
                 e.printStackTrace()
+
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    message = ("Bad Request")
+                    message = mapOf(
+                        "error" to (e.message ?: "Unknown error")
+                    )
                 )
             }
         }
