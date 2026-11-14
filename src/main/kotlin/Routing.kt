@@ -27,19 +27,19 @@ fun Application.configureRouting() {
             }
         post("/users") {
             try {
-                val user = call.receive<User>()
+                val userResponse = call.receive<UserResponse>()
 
-                println("Received user: $user")
+                println("Received user: $userResponse")
 
-                val response = UserResponse(
-                    name = user.name,
-                    email = user.email,
-                    phone = user.phone
+                val user = UserResponse(
+                    name = userResponse.name,
+                    email = userResponse.email,
+                    phone = userResponse.phone
                 )
 
                 call.respond(
                     status = HttpStatusCode.Created,
-                    message = response
+                    message = userResponse
                 )
             } catch (e: Exception) {
                 e.printStackTrace()
