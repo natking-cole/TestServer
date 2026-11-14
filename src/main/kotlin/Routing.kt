@@ -39,6 +39,8 @@ fun Application.configureRouting() {
                     phone = userResponse.phone
                 )
 
+                userDao.setUser(user)
+
                 call.respond(
                     status = HttpStatusCode.Created,
                     message = userResponse

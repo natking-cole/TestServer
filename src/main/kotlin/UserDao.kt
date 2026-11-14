@@ -72,13 +72,13 @@ class UserDao {
             user
         }
 
-    private suspend fun setUser(name: String, email: String, phone: String) = withContext(Dispatchers.IO) {
+    suspend fun setUser(userResponse: UserResponse) = withContext(Dispatchers.IO) {
         DatabaseFactory.getConnection().use { connection ->
 
             try {
                 val statement = connection.prepareStatement(
                     "INSERT INTO users (name, email, phone)" +
-                            "VALUES($name, $email, $phone)"
+                            "VALUES($userResponse.name, $userResponse.email, $userResponse.phone)"
                 )
 
                 statement.use { query ->
