@@ -1,5 +1,7 @@
 package com.example
 
+
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import com.example.database.DatabaseFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -73,35 +75,20 @@ class UserDao {
         }
 
     suspend fun setUser(userResponse: UserResponse) = withContext(Dispatchers.IO) {
-        DatabaseFactory.getConnection().use { connection ->
+            val sql = "INSERT INTO users (name, email, phone) VALUES (?, ?, ?)"
 
             try {
-                val statement = connection.prepareStatement(
-                    "INSERT INTO users (name, email, phone)" +
-                            "VALUES($userResponse.name, $userResponse.email, $userResponse.phone)"
-                )
-
-                statement.use { query ->
-
-                    val result = query.executeQuery()
-
-                    result.use {
-                        while (it.next()) {
-                            val user = User(
-                                id = it.getInt("id"),
-                                name = it.getString("name"),
-                                email = it.getString("email"),
-                                phone = it.getString("phone")
-                            )
-                        }
-
+                DatabaseFactory.getConnection().use { connection ->
+                    connection.prepareStatement(sql).use { statement ->
+                        statement.setString(1, userResponse.name)
+                        statement.setString(2, userResponse.email)
+                        statement.setString(3, userResponse.phone)
+                        statement.executeUpdate()
                     }
                 }
-
             } catch (e: SQLException) {
-                println("Error in setUser: $e")
+                println("Error in setUser: ${e.message}")
             }
-
+//just commenting so it lets me commit
         }
     }
-}
