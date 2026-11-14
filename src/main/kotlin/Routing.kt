@@ -32,7 +32,6 @@ fun Application.configureRouting() {
                 println("Received user: $user")
 
                 val response = UserResponse(
-                    id = user.id,
                     name = user.name,
                     email = user.email,
                     phone = user.phone
