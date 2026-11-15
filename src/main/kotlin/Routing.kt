@@ -56,7 +56,15 @@ fun Application.configureRouting() {
                 )
             }
         }
-
+        get("/users/{phone}"){
+            val user = userDao.getUserByPhone(call.parameters["phone"]!!)
+            if(user != null){
+                call.respond(user)
+            }
+            else{
+                call.respond("User not found!")
+            }
+        }
 
 
 

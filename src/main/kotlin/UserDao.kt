@@ -75,20 +75,51 @@ class UserDao {
         }
 
     suspend fun setUser(userResponse: UserResponse) = withContext(Dispatchers.IO) {
-            val sql = "INSERT INTO users (name, email, phone) VALUES (?, ?, ?)"
+        val sql = "INSERT INTO users (name, email, phone) VALUES (?, ?, ?)"
 
-            try {
-                DatabaseFactory.getConnection().use { connection ->
-                    connection.prepareStatement(sql).use { statement ->
-                        statement.setString(1, userResponse.name)
-                        statement.setString(2, userResponse.email)
-                        statement.setString(3, userResponse.phone)
-                        statement.executeUpdate()
+        try {
+            DatabaseFactory.getConnection().use { connection ->
+                connection.prepareStatement(sql).use { statement ->
+                    statement.setString(1, userResponse.name)
+                    statement.setString(2, userResponse.email)
+                    statement.setString(3, userResponse.phone)
+                    statement.executeUpdate()
+                }
+            }
+        } catch (e: SQLException) {
+            println("Error in setUser: ${e.message}")
+        }
+//just commenting so it lets me commit
+    }
+
+    suspend fun getUserByPhone(phone: String): User? =
+        withContext(Dispatchers.IO) {
+
+            var user: User? = null
+
+            DatabaseFactory.getConnection().use { connection ->
+
+                val statement = connection.prepareStatement(
+                    "SELECT id, name, email, phone FROM users WHERE phone = $phone"
+                )
+
+                statement.use { query ->
+
+                    val result = query.executeQuery()
+
+                    result.use {
+                        if (it.next()) {
+                            user = User(
+                                id = it.getInt("id"),
+                                name = it.getString("name"),
+                                email = it.getString("email"),
+                                phone = it.getString("phone")
+                            )
+                        }
+
                     }
                 }
-            } catch (e: SQLException) {
-                println("Error in setUser: ${e.message}")
             }
-//just commenting so it lets me commit
+            user
         }
-    }
+}
