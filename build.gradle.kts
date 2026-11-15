@@ -23,10 +23,6 @@ dependencies {
     implementation(libs.logback.classic)
 
 
-    //exposed
-    implementation("org.jetbrains.exposed:exposed-core:1.6.1")
-    implementation("org.jetbrains.exposed:exposed-jdbc:1.6.1")
-    implementation("mysql:mysql-connector-j:8.4.0")
     testImplementation(kotlin("test"))
     testImplementation(ktorLibs.server.testHost)
     // MySQL JDBC driver

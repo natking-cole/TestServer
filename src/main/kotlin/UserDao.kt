@@ -1,7 +1,7 @@
 package com.example
 
 
-import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+
 import com.example.database.DatabaseFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
