@@ -65,8 +65,9 @@ fun Application.configureRouting() {
                 call.respond("User not found!")
             }
         }
-        get("/users/{email}"){
-            val user = userDao.getUserByEmail(call.parameters["email"]!!)
+        get("/users"){
+            val email = call.request.queryParameters["email"]!!
+            val user = userDao.getUserByEmail(email)
             if(user != null){
                 call.respond(user)
             }
