@@ -24,8 +24,31 @@ fun Application.configureRouting() {
         }
 
             get("/users"){
-                val users = userDao.getUsers()
-                call.respond(users)
+                val email = call.request.queryParameters["email"]
+                val phone = call.request.queryParameters["phone"]
+                if(email != null){
+                    val user = userDao.getUserByEmail(email)
+                    if(user != null){
+                        call.respond(user)
+                    }
+                    else{
+                        call.respond("User not found!")
+                    }
+                }
+                if(phone != null){
+                    val user = userDao.getUserByPhone(phone)
+                    if(user != null){
+                        call.respond(user)
+                    }
+                    else{
+                        call.respond("User not found!")
+                    }
+                }
+                else{
+                    val users = userDao.getUsers()
+                    call.respond(users)
+                }
+
             }
         post("/users") {
             try {
@@ -56,27 +79,6 @@ fun Application.configureRouting() {
                 )
             }
         }
-        get("/users/{phone}"){
-            val user = userDao.getUserByPhone(call.parameters["phone"]!!)
-            if(user != null){
-                call.respond(user)
-            }
-            else{
-                call.respond("User not found!")
-            }
-        }
-        get("/users"){
-            val email = call.request.queryParameters["email"]!!
-            val user = userDao.getUserByEmail(email)
-            if(user != null){
-                call.respond(user)
-            }
-            else{
-                call.respond("User not found!")
-            }
-        }
-
-
 
         get("/users/{id}"){
             val user = userDao.getUser(call.parameters["id"]!!.toInt())
