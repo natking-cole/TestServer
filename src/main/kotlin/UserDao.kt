@@ -122,6 +122,36 @@ class UserDao {
             }
             user
         }
+    suspend fun getUserByName(name: String): User? =
+        withContext(Dispatchers.IO) {
+
+            var user: User? = null
+
+            DatabaseFactory.getConnection().use { connection ->
+
+                val statement = connection.prepareStatement(
+                    "SELECT id, name, email, phone FROM users WHERE name = $name"
+                )
+
+                statement.use { query ->
+
+                    val result = query.executeQuery()
+
+                    result.use {
+                        if (it.next()) {
+                            user = User(
+                                id = it.getInt("id"),
+                                name = it.getString("name"),
+                                email = it.getString("email"),
+                                phone = it.getString("phone")
+                            )
+                        }
+
+                    }
+                }
+            }
+            user
+        }
     suspend fun getUserByEmail(email: String): User? =
         withContext(Dispatchers.IO) {
 
