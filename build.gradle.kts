@@ -33,4 +33,7 @@ dependencies {
 
     //for .env
     implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
+
+    //hashing library
+    implementation("com.password4j:password4j:1.8.4")
 }

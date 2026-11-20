@@ -3,6 +3,7 @@ package com.example
 
 
 import com.example.database.DatabaseFactory
+import com.password4j.Password
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.SQLException
@@ -17,7 +18,7 @@ class UserDao {
             DatabaseFactory.getConnection().use { connection ->
 
                 val statement = connection.prepareStatement(
-                    "SELECT id, name, email, phone FROM users"
+                    "SELECT id, name, email, phone, passwordHash FROM users"
                 )
 
                 statement.use { query ->
@@ -32,7 +33,8 @@ class UserDao {
                                     id = it.getInt("id"),
                                     name = it.getString("name"),
                                     email = it.getString("email"),
-                                    phone = it.getString("phone")
+                                    phone = it.getString("phone"),
+                                    passwordHash = it.getString("passwordHash")
                                 )
                             )
                         }
@@ -51,7 +53,7 @@ class UserDao {
             DatabaseFactory.getConnection().use { connection ->
 
                 val statement = connection.prepareStatement(
-                    "SELECT id, name, email, phone FROM users WHERE id = $id"
+                    "SELECT id, name, email, phone, passwordHash FROM users WHERE id = $id"
                 )
 
                 statement.use { query ->
@@ -64,7 +66,8 @@ class UserDao {
                                 id = it.getInt("id"),
                                 name = it.getString("name"),
                                 email = it.getString("email"),
-                                phone = it.getString("phone")
+                                phone = it.getString("phone"),
+                                passwordHash = it.getString("passwordHash")
                             )
                         }
 
@@ -75,7 +78,8 @@ class UserDao {
         }
 
     suspend fun setUser(userResponse: UserResponse) = withContext(Dispatchers.IO) {
-        val sql = "INSERT INTO users (name, email, phone) VALUES (?, ?, ?)"
+        val hash = Password.hash(userResponse.password).withArgon2().result
+        val sql = "INSERT INTO users (name, email, phone, passwordHash) VALUES (?, ?, ?, ?)"
 
         try {
             DatabaseFactory.getConnection().use { connection ->
@@ -83,6 +87,7 @@ class UserDao {
                     statement.setString(1, userResponse.name)
                     statement.setString(2, userResponse.email)
                     statement.setString(3, userResponse.phone)
+                    statement.setString(4, hash) //pass
                     statement.executeUpdate()
                 }
             }
@@ -100,7 +105,7 @@ class UserDao {
             DatabaseFactory.getConnection().use { connection ->
 
                 val statement = connection.prepareStatement(
-                    "SELECT id, name, email, phone FROM users WHERE phone = $phone"
+                    "SELECT id, name, email, phone, passwordHash FROM users WHERE phone = $phone"
                 )
 
                 statement.use { query ->
@@ -113,7 +118,8 @@ class UserDao {
                                 id = it.getInt("id"),
                                 name = it.getString("name"),
                                 email = it.getString("email"),
-                                phone = it.getString("phone")
+                                phone = it.getString("phone"),
+                                passwordHash = it.getString("passwordHash")
                             )
                         }
 
@@ -130,7 +136,7 @@ class UserDao {
             DatabaseFactory.getConnection().use { connection ->
 
                 val statement = connection.prepareStatement(
-                    "SELECT id, name, email, phone FROM users WHERE name = $name"
+                    "SELECT id, name, email, phone, passwordHash FROM users WHERE name = $name"
                 )
 
                 statement.use { query ->
@@ -143,7 +149,8 @@ class UserDao {
                                 id = it.getInt("id"),
                                 name = it.getString("name"),
                                 email = it.getString("email"),
-                                phone = it.getString("phone")
+                                phone = it.getString("phone"),
+                                passwordHash = it.getString("passwordHash")
                             )
                         }
 
@@ -160,7 +167,7 @@ class UserDao {
             DatabaseFactory.getConnection().use { connection ->
 
                 val statement = connection.prepareStatement(
-                    "SELECT id, name, email, phone FROM users WHERE email = $email"
+                    "SELECT id, name, email, phone, passwordHash FROM users WHERE email = $email"
                 )
 
                 statement.use { query ->
@@ -173,7 +180,8 @@ class UserDao {
                                 id = it.getInt("id"),
                                 name = it.getString("name"),
                                 email = it.getString("email"),
-                                phone = it.getString("phone")
+                                phone = it.getString("phone"),
+                                passwordHash = it.getString("passwordHash")
                             )
                         }
 

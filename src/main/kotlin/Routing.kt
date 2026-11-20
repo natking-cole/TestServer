@@ -69,7 +69,8 @@ fun Application.configureRouting() {
                 val user = UserResponse(
                     name = userResponse.name,
                     email = userResponse.email,
-                    phone = userResponse.phone
+                    phone = userResponse.phone,
+                    password = userResponse.password,
                 )
 
                 userDao.setUser(user)
