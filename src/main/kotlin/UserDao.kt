@@ -190,4 +190,40 @@ class UserDao {
             }
             user
         }
+
+    suspend fun getUsersReports(id: Int): List<Report> =
+    withContext(Dispatchers.IO) {
+
+        val reports = mutableListOf<Report>()
+
+        DatabaseFactory.getConnection().use { connection ->
+
+            val statement = connection.prepareStatement(
+                "SELECT * FROM reports WHERE user_id = $id"
+            )
+
+            statement.use { query ->
+
+                val result = query.executeQuery()
+
+                result.use {
+                    while (it.next()) {
+
+                        reports.add(
+                            Report(
+                                id = it.getInt("id"),
+                                date = it.getString("date"),
+                                subject = it.getString("subject"),
+                                status = it.getString("status"),
+                                body = it.getString("body"),
+                                userId = it.getInt("user_id"),
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        reports
+    }
 }

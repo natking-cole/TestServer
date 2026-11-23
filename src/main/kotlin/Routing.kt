@@ -101,6 +101,11 @@ fun Application.configureRouting() {
             }
 
         }
+        get("/reports/{id}"){
+            val id = call.parameters["id"]!!.toInt()
+            val userReports = userDao.getUsersReports(id)
+            call.respond(userReports)
+        }
 
     }
 }
