@@ -108,8 +108,8 @@ fun Application.configureRouting() {
         }
         get("/contacts/{id}"){
             val id = call.parameters["id"]!!.toInt()
-            val userReports = userDao.getUsersContacts(id)
-            call.respond(userReports)
+            val userContacts = userDao.getUsersContacts(id) // works, but should be user contacts
+            call.respond(userContacts)
         }
 
     }
