@@ -247,7 +247,7 @@ class UserDao {
 
                             contacts.add(
                                 Contact(
-                                    entry_id = it.getInt("id"),
+                                    entry_id = it.getInt("entry_id"),
                                     user_id = it.getInt("user_id"),
                                     number = it.getString("number"),
                                     name = it.getString("name"),
