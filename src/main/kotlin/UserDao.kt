@@ -226,4 +226,39 @@ class UserDao {
 
         reports
     }
+
+    suspend fun getUsersContacts(id: Int): List<Contact> =
+        withContext(Dispatchers.IO) {
+
+            val contacts = mutableListOf<Contact>()
+
+            DatabaseFactory.getConnection().use { connection ->
+
+                val statement = connection.prepareStatement(
+                    "SELECT * FROM emergency_contacts WHERE user_id = $id"
+                )
+
+                statement.use { query ->
+
+                    val result = query.executeQuery()
+
+                    result.use {
+                        while (it.next()) {
+
+                            contacts.add(
+                                Contact(
+                                    entry_id = it.getInt("id"),
+                                    user_id = it.getInt("user_id"),
+                                    number = it.getString("number"),
+                                    name = it.getString("name"),
+                                    trusted_id = it.getInt("trusted_id")
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
+            contacts
+        }
 }
