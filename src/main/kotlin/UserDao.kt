@@ -96,6 +96,24 @@ class UserDao {
         }
 //just commenting so it lets me commit
     }
+    //excludes password
+    suspend fun updateUser(user: User) = withContext(Dispatchers.IO) {
+
+        val sql = "UPDATE users SET name = ?, email = ?, phone = ? WHERE id = ${user.id}"
+
+        try {
+            DatabaseFactory.getConnection().use { connection ->
+                connection.prepareStatement(sql).use { statement ->
+                    statement.setString(1, user.name)
+                    statement.setString(2, user.email)
+                    statement.setString(3, user.phone)
+                    statement.executeUpdate()
+                }
+            }
+        } catch (e: SQLException) {
+            println("Error in setUser: ${e.message}")
+        }
+    }
 
     suspend fun getUserByPhone(phone: String): User? =
         withContext(Dispatchers.IO) {

@@ -90,6 +90,28 @@ fun Application.configureRouting() {
                 )
             }
         }
+        post("/users/update") {
+            try {
+                val user = call.receive<User>()
+
+                println("Received user: $user")
+                userDao.updateUser(user)
+
+                call.respond(
+                    status = HttpStatusCode.Created,
+                    message = user
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = mapOf(
+                        "error" to (e.message ?: "Unknown error")
+                    )
+                )
+            }
+        }
 
         get("/users/{id}"){
             val user = userDao.getUser(call.parameters["id"]!!.toInt())
