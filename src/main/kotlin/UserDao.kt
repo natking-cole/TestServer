@@ -94,7 +94,25 @@ class UserDao {
         } catch (e: SQLException) {
             println("Error in setUser: ${e.message}")
         }
-//just commenting so it lets me commit
+
+    }
+    suspend fun setContact(contactResponse: ContactResponse) = withContext(Dispatchers.IO) {
+        val sql = "INSERT INTO emergency_contacts (user_id, number, name, trusted_id) VALUES (?, ?, ?, ?)"
+
+        try {
+            DatabaseFactory.getConnection().use { connection ->
+                connection.prepareStatement(sql).use { statement ->
+                    statement.setInt(1, contactResponse.user_id)
+                    statement.setString(2, contactResponse.number)
+                    statement.setString(3, contactResponse.name)
+                    statement.setObject(4, contactResponse.trusted_id)
+                    statement.executeUpdate()
+                }
+            }
+        } catch (e: SQLException) {
+            println("Error in setContact: ${e.message}")
+        }
+
     }
     //excludes password
     suspend fun updateUser(user: User) = withContext(Dispatchers.IO) {

@@ -112,6 +112,28 @@ fun Application.configureRouting() {
                 )
             }
         }
+        post("/users/contact"){
+            try{
+                val contact = call.receive<ContactResponse>()
+
+                println("Received contact: $contact")
+                userDao.setContact(contact)
+
+                call.respond(
+                    status = HttpStatusCode.Created,
+                    message = contact
+                )
+            }catch(e: Exception){
+                e.printStackTrace()
+
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = mapOf(
+                        "error" to (e.message ?: "Unknown error")
+                    )
+                )
+            }
+        }
 
         get("/users/{id}"){
             val user = userDao.getUser(call.parameters["id"]!!.toInt())
