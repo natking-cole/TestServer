@@ -114,6 +114,26 @@ class UserDao {
         }
 
     }
+    suspend fun setReport(reportResponse: ReportResponse) = withContext(Dispatchers.IO) {
+        val sql = "INSERT INTO reports ( date, subject, body, status, user_id) VALUES (?, ?, ?, ?, ?)"
+
+        try {
+            DatabaseFactory.getConnection().use { connection ->
+                connection.prepareStatement(sql).use { statement ->
+                    statement.setString(1, reportResponse.date)
+                    statement.setString(2, reportResponse.subject)
+                    statement.setString(3, reportResponse.body)
+                    statement.setString(4, reportResponse.status)
+                    statement.setInt(5, reportResponse.userId)
+
+                    statement.executeUpdate()
+                }
+            }
+        } catch (e: SQLException) {
+            println("Error in setReport: ${e.message}")
+        }
+
+    }
     //excludes password
     suspend fun updateUser(user: User) = withContext(Dispatchers.IO) {
 

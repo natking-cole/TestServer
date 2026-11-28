@@ -135,6 +135,28 @@ fun Application.configureRouting() {
             }
         }
 
+        post("/users/report"){
+            try{
+                val report = call.receive<ReportResponse>()
+
+                println("Received report: $report")
+                userDao.setReport(report)
+
+                call.respond(
+                    status = HttpStatusCode.Created,
+                    message = report
+                )
+            }catch(e: Exception){
+                e.printStackTrace()
+
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = mapOf(
+                        "error" to (e.message ?: "Unknown error")
+                    )
+                )
+            }
+        }
         get("/users/{id}"){
             val user = userDao.getUser(call.parameters["id"]!!.toInt())
             if (user != null){
